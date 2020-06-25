@@ -1,3 +1,3 @@
-# jenkins-test-k8s-pipeline
+# api_test
 
-Follow along example presented in: https://medium.com/vivid-seats-engineering/how-to-kubernetes-pods-as-jenkins-build-agents-a726d3886861
+Derived from example presented in: https://knative.dev/docs/serving/samples/hello-world/helloworld-python/

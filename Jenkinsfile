@@ -1,7 +1,7 @@
 pipeline {
     agent {
         kubernetes {
-            label 'jenkins-test-k8s-pipeline'  // all your pods will be named with this prefix, followed by a unique id
+            label 'api_test'  // all your pods will be named with this prefix, followed by a unique id
             idleMinutes 1  // how long the pod will live after no jobs have run on it
             yamlFile 'build-pod.yaml'  // path to the pod definition relative to the root of our project 
         }
@@ -23,8 +23,8 @@ pipeline {
             steps {
                 container('docker') {
                     sh "docker login -u ${env.DOCKER_REPO_CREDS_USR} -p ${env.DOCKER_REPO_CREDS_PSW}"  // Login   
-                    sh "docker build -t jwenzel/jenkins-test-k8s-pipeline:${env.DOCKERTAG} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container,
-                    sh "docker push jwenzel/jenkins-test-k8s-pipeline:${env.DOCKERTAG}"        // which is just connecting to the host docker deaemon
+                    sh "docker build -t jwenzel/api_test:${env.DOCKERTAG} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container,
+                    sh "docker push jwenzel/api_test:${env.DOCKERTAG}"        // which is just connecting to the host docker deaemon
                 }
             }
         }
@@ -32,22 +32,11 @@ pipeline {
             steps {
                 container('helm') {
                     withKubeConfig([credentialsId: 'kubeconfig']) {
-                        sh "helm upgrade --install --force jenkins-test-k8s-pipeline --namespace=jenkins-test-k8s-pipeline --set image.repository=jwenzel/jenkins-test-k8s-pipeline --set image.tag=${env.DOCKERTAG} ./helm"
+                        sh "helm upgrade --install --force api_test --namespace=api_test --set image.repository=jwenzel/api_test --set image.tag=${env.DOCKERTAG} ./helm"
                     }                    
                 }
             }
        }
-        
-//        stage('Test kubectl') {
-//            steps {
-//                container('kubectl') {
-//                    withKubeConfig([credentialsId: 'kubeconfig']) {
-//                        echo "Testing kubectl"
-//                        sh 'kubectl get pods --all-namespaces -o wide'
-//                    }                    
-//                }
-//            }
-//       }
     }
 }
 
