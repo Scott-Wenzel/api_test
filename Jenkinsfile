@@ -16,8 +16,8 @@ pipeline {
             steps {
                 container('docker') {
                     sh "docker login -u ${env.DOCKER_REPO_CREDS_USR} -p ${env.DOCKER_REPO_CREDS_PSW}"  // Login   
-                    sh "docker build -t jwenzel/api_test:${env.DOCKERTAG} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container,
-                    sh "docker push jwenzel/api_test:${env.DOCKERTAG}"        // which is just connecting to the host docker deaemon
+                    sh "docker build -t jwenzel/api-test:${env.DOCKERTAG} ."  // when we run docker in this step, we're running it via a shell on the docker build-pod container,
+                    sh "docker push jwenzel/api-test:${env.DOCKERTAG}"        // which is just connecting to the host docker deaemon
                 }
             }
         }
@@ -25,7 +25,7 @@ pipeline {
             steps {
                 container('helm') {
                     withKubeConfig([credentialsId: 'kubeconfig']) {
-                        sh "helm upgrade --install --force api_test --namespace=api_test --set image.repository=jwenzel/api_test --set image.tag=${env.DOCKERTAG} ./helm"
+                        sh "helm upgrade --install --force api-test --namespace=api-test --set image.repository=jwenzel/api-test --set image.tag=${env.DOCKERTAG} ./helm"
                     }                    
                 }
             }
