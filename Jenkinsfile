@@ -12,13 +12,6 @@ pipeline {
         DOCKERTAG = "${env.BUILD_NUMBER}"
     }
     stages {
-        stage('Build') {
-            steps {  // no container directive is needed as the maven container is the default
-                container('maven') {
-                    sh "mvn clean package"   
-                }
-            }
-        }
         stage('Build Docker Image') {
             steps {
                 container('docker') {
